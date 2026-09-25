@@ -1,5 +1,7 @@
 import React from "react";
 
+import BackendEngineSelector from "../BackendEngineSelector";
+
 type AppLayoutProps = {
   children: React.ReactNode;
 };
@@ -14,7 +16,7 @@ export default function AppLayout({ children }: AppLayoutProps): React.JSX.Eleme
           </div>
 
           <div className="flex items-center gap-4">
-            <div id="backend-engine-selector-placeholder" className="h-9 w-32 rounded-md bg-muted animate-pulse" />
+            <BackendEngineSelector />
           </div>
         </div>
       </header>
