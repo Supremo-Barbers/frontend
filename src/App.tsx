@@ -1,72 +1,25 @@
-import { useState } from 'react';
-import { Button } from './components/ui/button';
-import { useBackendEngineStore } from './stores/backend-engine.store';
-import { apiClient } from './api/client';
-import { ErrorResponseSchema } from './schemas/error.schemas';
+import React from "react";
+import AppLayout from "./components/layout/AppLayout";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./components/ui/card";
 
-function App() {
-  const { engine, setEngine } = useBackendEngineStore();
-  const [status, setStatus] = useState<string>('Not tested');
-
-  const testSchema = () => {
-    try {
-      const data = ErrorResponseSchema.parse({
-        error: "Not Found",
-        message: "Course not found",
-        path: "/api/courses/1",
-        status: 404,
-        timestamp: new Date().toISOString(),
-      });
-      setStatus(`Schema test passed: ${data.status}`);
-    } catch (e) {
-      setStatus(`Schema test failed: ${e}`);
-    }
-  };
-
-  const testClient = async () => {
-    try {
-      // Just a dummy request to show apiClient is configured
-      await apiClient.get('/nonexistent');
-    } catch (e: any) {
-      setStatus(`API Error (expected): ${e.message} - URL: ${e.config?.baseURL}`);
-    }
-  }
-
+export default function App(): React.JSX.Element {
   return (
-    <div className="p-8 max-w-4xl mx-auto space-y-8 text-left">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">NU Grading System</h1>
-        <p className="text-muted-foreground mt-2">Frontend Bootstrap Verification</p>
+    <AppLayout>
+      <div className="flex flex-col items-center justify-center min-h-[50vh] text-center max-w-2xl mx-auto space-y-6">
+        <Card className="w-full shadow-sm border-dashed">
+          <CardHeader>
+            <CardTitle className="text-2xl">Welcome to NU Grading System</CardTitle>
+            <CardDescription>A unified professor portal for dynamic grading</CardDescription>
+          </CardHeader>
+          <CardContent className="text-muted-foreground">
+            <p>
+              Please select or create a course to begin configuring your rubric, enrolling students, and recording
+              assessment scores.
+            </p>
+            <div className="mt-8 h-10 w-48 bg-muted rounded-md animate-pulse mx-auto" />
+          </CardContent>
+        </Card>
       </div>
-      
-      <div className="space-y-4 border p-6 rounded-lg">
-        <h2 className="text-xl font-semibold">Zustand Store (Backend Engine)</h2>
-        <div className="flex items-center space-x-4">
-          <p>Current Engine: <span className="font-mono font-bold text-primary">{engine}</span></p>
-          <Button 
-            variant="outline" 
-            onClick={() => setEngine(engine === 'JAVA' ? 'PYTHON' : 'JAVA')}
-          >
-            Toggle Engine
-          </Button>
-        </div>
-      </div>
-
-      <div className="space-y-4 border p-6 rounded-lg">
-        <h2 className="text-xl font-semibold">Zod Schema</h2>
-        <Button onClick={testSchema}>Test ErrorResponseSchema</Button>
-      </div>
-
-      <div className="space-y-4 border p-6 rounded-lg">
-        <h2 className="text-xl font-semibold">Axios Client</h2>
-        <Button onClick={testClient}>Test API Request</Button>
-      </div>
-
-      <div className="mt-8 p-4 bg-muted rounded-md font-mono text-sm">
-        Status: {status}
-      </div>
-    </div>
+    </AppLayout>
   );
 }
-
-export default App;
