@@ -14,6 +14,7 @@ import {
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { toast } from "sonner";
 
 // a UI-specific schema that accepts 1-100 percentage
 const CategoryFormSchema = z.object({
@@ -48,9 +49,11 @@ export default function CreateCategoryDialog({ onSubmit }: CreateCategoryDialogP
       // convert UI percentage (e.g. 30) to API fraction (0.30)
       const fractionalWeight = data.weightPercentage / 100;
       await onSubmit({ name: data.name, weight: fractionalWeight });
+      toast.success("Category created successfully");
       setIsOpen(false);
       reset();
     } catch (error) {
+      toast.error("Failed to create category");
       console.error(error);
     }
   };

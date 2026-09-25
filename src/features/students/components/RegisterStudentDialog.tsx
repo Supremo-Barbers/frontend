@@ -14,6 +14,7 @@ import {
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { toast } from "sonner";
 
 interface RegisterStudentDialogProps {
   onSubmit: (data: RegisterStudentRequest) => Promise<Student>;
@@ -40,9 +41,11 @@ export default function RegisterStudentDialog({ onSubmit }: RegisterStudentDialo
   const handleFormSubmit = async (data: RegisterStudentRequest): Promise<void> => {
     try {
       await onSubmit(data);
+      toast.success("Student registered successfully");
       setIsOpen(false);
       reset();
     } catch (error) {
+      toast.error("Failed to register student");
       console.error(error);
     }
   };

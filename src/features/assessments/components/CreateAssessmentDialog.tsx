@@ -16,6 +16,7 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { toast } from "sonner";
 
 interface CreateAssessmentDialogProps {
   categories: Category[];
@@ -46,10 +47,12 @@ export default function CreateAssessmentDialog({
     if (!selectedCategoryId) return;
     try {
       await onSubmit(selectedCategoryId, data);
+      toast.success("Assessment created successfully");
       setIsOpen(false);
       reset();
       setSelectedCategoryId("");
     } catch (error) {
+      toast.error("Failed to create assessment");
       console.error(error);
     }
   };

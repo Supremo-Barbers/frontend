@@ -7,6 +7,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useBackendEngineStore, type BackendEngine } from "@/stores/backend-engine.store";
+import { toast } from "sonner";
 
 export default function BackendEngineSelector(): React.JSX.Element {
   const { engine, setEngine } = useBackendEngineStore();
@@ -14,6 +15,7 @@ export default function BackendEngineSelector(): React.JSX.Element {
   const handleEngineChange = (value: string | null): void => {
     if (value) {
       setEngine(value as BackendEngine);
+      toast.info(`Switched grading engine to ${value}`);
     }
   };
 

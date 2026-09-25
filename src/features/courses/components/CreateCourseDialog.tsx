@@ -15,6 +15,7 @@ import {
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { toast } from "sonner";
 
 interface CreateCourseDialogProps {
   onSubmit: (data: CreateCourseRequest) => Promise<Course>;
@@ -40,9 +41,11 @@ export default function CreateCourseDialog({ onSubmit }: CreateCourseDialogProps
   const handleFormSubmit = async (data: CreateCourseRequest): Promise<void> => {
     try {
       await onSubmit(data);
+      toast.success("Course created successfully");
       setIsOpen(false);
       reset();
     } catch (error) {
+      toast.error("Failed to create course");
       console.error(error);
     }
   };

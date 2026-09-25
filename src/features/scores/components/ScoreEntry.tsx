@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { XIcon } from "lucide-react";
+import { toast } from "sonner";
 
 export default function ScoreEntry(): React.JSX.Element {
   const {
@@ -86,8 +87,10 @@ export default function ScoreEntry(): React.JSX.Element {
   const handleFormSubmit = async (data: ScoreFormValues): Promise<void> => {
     try {
       await submitScores(data as RecordScoresRequest);
+      toast.success("Scores recorded successfully");
       setActiveAssessment(null);
     } catch (err) {
+      toast.error("Failed to record scores");
       console.error(err);
     }
   };

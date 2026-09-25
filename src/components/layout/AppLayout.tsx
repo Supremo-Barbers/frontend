@@ -1,6 +1,6 @@
 import React from "react";
-
 import BackendEngineSelector from "../BackendEngineSelector";
+import { Toaster } from "@/components/ui/sonner";
 
 type AppLayoutProps = {
   children: React.ReactNode;
@@ -29,6 +29,7 @@ export default function AppLayout({ children }: AppLayoutProps): React.JSX.Eleme
           <p>Professor Workflow Portal</p>
         </div>
       </footer>
+      <Toaster />
     </div>
   );
 }

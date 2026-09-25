@@ -15,6 +15,7 @@ import {
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { toast } from "sonner";
 
 interface EnrollStudentDialogProps {
   availableStudents: Student[];
@@ -43,10 +44,12 @@ export default function EnrollStudentDialog({
     if (!selectedStudentId) return;
     try {
       await onSubmit({ studentId: selectedStudentId });
+      toast.success("Student enrolled successfully");
       setIsOpen(false);
       reset();
       setSelectedStudentId("");
     } catch (error) {
+      toast.error("Failed to enroll student");
       console.error(error);
     }
   };
