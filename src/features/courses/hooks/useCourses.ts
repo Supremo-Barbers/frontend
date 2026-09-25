@@ -26,11 +26,11 @@ export const useCourses = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [engine]); 
+  }, []); 
 
   useEffect(() => {
     void fetchCourses();
-  }, [fetchCourses]);
+  }, [fetchCourses, engine]);
 
   const addCourse = async (courseData: CreateCourseRequest): Promise<Course> => {
     setIsLoading(true);

@@ -32,11 +32,11 @@ export const useCategories = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [engine, selectedCourse]);
+  }, [selectedCourse]);
 
   useEffect(() => {
     void fetchCategories();
-  }, [fetchCategories]);
+  }, [fetchCategories, engine]);
 
   const addCategory = async (categoryData: CreateCategoryRequest): Promise<Category> => {
     if (!selectedCourse) {

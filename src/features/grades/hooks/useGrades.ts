@@ -33,11 +33,11 @@ export const useGrades = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [selectedCourse, engine]); 
+  }, [selectedCourse]); 
 
   useEffect(() => {
     void fetchGrades();
-  }, [fetchGrades]);
+  }, [fetchGrades, engine]);
 
   return {
     gradeSummary,
