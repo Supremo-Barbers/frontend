@@ -1,25 +1,37 @@
 import React from "react";
 import AppLayout from "./components/layout/AppLayout";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./components/ui/card";
+import CourseList from "./features/courses/components/CourseList";
+import { useCourseStore } from "./stores/course.store";
 
 export default function App(): React.JSX.Element {
+  const selectedCourse = useCourseStore((state) => state.selectedCourse);
+
   return (
     <AppLayout>
-      <div className="flex flex-col items-center justify-center min-h-[50vh] text-center max-w-2xl mx-auto space-y-6">
-        <Card className="w-full shadow-sm border-dashed">
-          <CardHeader>
-            <CardTitle className="text-2xl">Welcome to NU Grading System</CardTitle>
-            <CardDescription>A unified professor portal for dynamic grading</CardDescription>
-          </CardHeader>
-          <CardContent className="text-muted-foreground">
-            <p>
-              Please select or create a course to begin configuring your rubric, enrolling students, and recording
-              assessment scores.
+      <CourseList />
+
+      {selectedCourse && (
+        <div className="mt-8 pt-8 border-t space-y-6">
+          <div className="flex flex-col gap-2">
+            <h2 className="text-2xl font-bold tracking-tight">{selectedCourse.code} Workspace</h2>
+            <p className="text-muted-foreground">
+              {selectedCourse.title} ({selectedCourse.term})
             </p>
-            <div className="mt-8 h-10 w-48 bg-muted rounded-md animate-pulse mx-auto" />
-          </CardContent>
-        </Card>
-      </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="h-64 rounded-xl bg-muted/50 border border-dashed flex items-center justify-center">
+              <span className="text-muted-foreground">Feature 06: Rubric & Categories</span>
+            </div>
+            <div className="h-64 rounded-xl bg-muted/50 border border-dashed flex items-center justify-center">
+              <span className="text-muted-foreground">Feature 08 & 09: Roster & Enrollment</span>
+            </div>
+            <div className="h-64 rounded-xl bg-muted/50 border border-dashed flex items-center justify-center md:col-span-2 lg:col-span-1">
+              <span className="text-muted-foreground">Feature 10 & 11: Gradebook</span>
+            </div>
+          </div>
+        </div>
+      )}
     </AppLayout>
   );
 }
