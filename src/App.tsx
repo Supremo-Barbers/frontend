@@ -2,6 +2,7 @@ import React from "react";
 import AppLayout from "./components/layout/AppLayout";
 import CourseList from "./features/courses/components/CourseList";
 import CategoryList from "./features/categories/components/CategoryList";
+import AssessmentList from "./features/assessments/components/AssessmentList";
 import { useCourseStore } from "./stores/course.store";
 
 export default function App(): React.JSX.Element {
@@ -20,9 +21,10 @@ export default function App(): React.JSX.Element {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div className="md:col-span-2 lg:col-span-1">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-1 space-y-6">
               <CategoryList />
+              <AssessmentList />
             </div>
             <div className="h-64 rounded-xl bg-muted/50 border border-dashed flex items-center justify-center">
               <span className="text-muted-foreground">Feature 08 & 09: Roster & Enrollment</span>
