@@ -6,6 +6,7 @@ import AssessmentList from "./features/assessments/components/AssessmentList";
 import StudentRoster from "./features/students/components/StudentRoster";
 import CourseRoster from "./features/enrollments/components/CourseRoster";
 import ScoreEntry from "./features/scores/components/ScoreEntry";
+import Gradebook from "./features/grades/components/Gradebook";
 import { useCourseStore } from "./stores/course.store";
 
 export default function App(): React.JSX.Element {
@@ -36,8 +37,8 @@ export default function App(): React.JSX.Element {
               <StudentRoster />
               <CourseRoster />
             </div>
-            <div className="h-64 rounded-xl bg-muted/50 border border-dashed flex items-center justify-center md:col-span-2 lg:col-span-1">
-              <span className="text-muted-foreground">Feature 10 & 11: Gradebook</span>
+            <div className="lg:col-span-3">
+              <Gradebook />
             </div>
           </div>
         </div>
