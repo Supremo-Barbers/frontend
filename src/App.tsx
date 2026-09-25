@@ -5,6 +5,7 @@ import CategoryList from "./features/categories/components/CategoryList";
 import AssessmentList from "./features/assessments/components/AssessmentList";
 import StudentRoster from "./features/students/components/StudentRoster";
 import CourseRoster from "./features/enrollments/components/CourseRoster";
+import ScoreEntry from "./features/scores/components/ScoreEntry";
 import { useCourseStore } from "./stores/course.store";
 
 export default function App(): React.JSX.Element {
@@ -24,6 +25,9 @@ export default function App(): React.JSX.Element {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-3">
+              <ScoreEntry />
+            </div>
             <div className="lg:col-span-1 space-y-6">
               <CategoryList />
               <AssessmentList />

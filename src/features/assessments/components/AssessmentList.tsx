@@ -3,10 +3,13 @@ import { useCategories } from "@/features/categories/hooks/useCategories";
 import { useAssessments } from "../hooks/useAssessments";
 import CreateAssessmentDialog from "./CreateAssessmentDialog";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { useGradingSessionStore } from "@/stores/grading-session.store";
 
 export default function AssessmentList(): React.JSX.Element {
   const { categories } = useCategories();
   const { assessments, isLoading, error, addAssessment } = useAssessments(categories);
+  const setActiveAssessment = useGradingSessionStore((state) => state.setActiveAssessment);
 
   const groupedAssessments = categories.map((category) => {
     return {
@@ -58,10 +61,15 @@ export default function AssessmentList(): React.JSX.Element {
                     {group.assessments.map((assessment) => (
                       <li
                         key={assessment.id}
-                        className="flex items-center justify-between p-3 border rounded-md bg-muted/20"
+                        className="flex flex-col sm:flex-row sm:items-center justify-between p-3 border rounded-md bg-muted/20 gap-2"
                       >
-                        <span className="font-medium text-sm">{assessment.title}</span>
-                        <span className="text-sm text-muted-foreground">Max: {assessment.maxScore} pts</span>
+                        <div>
+                          <div className="font-medium text-sm">{assessment.title}</div>
+                          <div className="text-sm text-muted-foreground">Max: {assessment.maxScore} pts</div>
+                        </div>
+                        <Button variant="outline" size="sm" onClick={() => setActiveAssessment(assessment)}>
+                          Enter Scores
+                        </Button>
                       </li>
                     ))}
                   </ul>
