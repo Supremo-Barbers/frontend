@@ -49,7 +49,7 @@ export default function CourseRoster(): React.JSX.Element {
           ) : (
             <ul className="space-y-2">
               {enrolledStudents.map((student) => (
-                <li key={student.id} className="flex items-center justify-between p-3 border rounded-md bg-muted/20">
+                <li key={student.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-3 border rounded-md bg-muted/20 gap-2">
                   <div>
                     <span className="font-medium">
                       {student.lastName}, {student.firstName}

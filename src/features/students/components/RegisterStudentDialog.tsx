@@ -73,7 +73,7 @@ export default function RegisterStudentDialog({ onSubmit }: RegisterStudentDialo
             <Input id="studentNumber" placeholder="e.g. 2026-12345" {...register("studentNumber")} />
             {errors.studentNumber && <p className="text-sm text-destructive">{errors.studentNumber.message}</p>}
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="firstName">First Name</Label>
               <Input id="firstName" placeholder="e.g. Jane" {...register("firstName")} />

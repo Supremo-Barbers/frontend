@@ -1,11 +1,5 @@
 import React from "react";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useBackendEngineStore, type BackendEngine } from "@/stores/backend-engine.store";
 import { toast } from "sonner";
 
@@ -21,7 +15,7 @@ export default function BackendEngineSelector(): React.JSX.Element {
 
   return (
     <Select value={engine} onValueChange={handleEngineChange}>
-      <SelectTrigger className="w-45 bg-background">
+      <SelectTrigger className="w-35 sm:w-45 bg-background">
         <SelectValue placeholder="Select Engine" />
       </SelectTrigger>
       <SelectContent>

@@ -12,8 +12,8 @@ export default function AppLayout({ children }: AppLayoutProps): React.JSX.Eleme
     <div className="min-h-screen bg-background flex flex-col">
       <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
         <div className="container mx-auto flex h-16 items-center justify-between px-4 sm:px-8">
-          <div className="flex items-center gap-4">
-            <span className="font-bold text-xl tracking-tight text-primary">NU Grading System</span>
+          <div className="flex items-center gap-2 sm:gap-4 truncate mr-2">
+            <span className="font-bold text-lg sm:text-xl tracking-tight text-primary truncate">NU Grading</span>
           </div>
 
           <div className="flex items-center gap-3">
