@@ -1,5 +1,6 @@
 import React from "react";
 import BackendEngineSelector from "../BackendEngineSelector";
+import ThemeToggle from "../ThemeToggle";
 import { Toaster } from "@/components/ui/sonner";
 
 type AppLayoutProps = {
@@ -15,8 +16,9 @@ export default function AppLayout({ children }: AppLayoutProps): React.JSX.Eleme
             <span className="font-bold text-xl tracking-tight text-primary">NU Grading System</span>
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
             <BackendEngineSelector />
+            <ThemeToggle />
           </div>
         </div>
       </header>
