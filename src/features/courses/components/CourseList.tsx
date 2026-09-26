@@ -1,10 +1,12 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import { useCourses } from "../hooks/useCourses";
 import CourseCard from "./CourseCard";
 import CreateCourseDialog from "./CreateCourseDialog";
 
 export default function CourseList(): React.JSX.Element {
-  const { courses, isLoading, error, selectedCourse, selectCourse, addCourse } = useCourses();
+  const navigate = useNavigate();
+  const { courses, isLoading, error, selectedCourse, addCourse } = useCourses();
 
   return (
     <div className="space-y-6">
@@ -38,7 +40,7 @@ export default function CourseList(): React.JSX.Element {
               key={course.id}
               course={course}
               isSelected={selectedCourse?.id === course.id}
-              onSelect={selectCourse}
+              onSelect={(id) => navigate(`/courses/${id}`)}
             />
           ))}
         </div>

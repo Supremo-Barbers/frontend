@@ -1,10 +1,10 @@
 import React from "react";
-import BackendEngineSelector from "../BackendEngineSelector";
+import { Outlet } from "react-router-dom";
 import ThemeToggle from "../ThemeToggle";
 import { Toaster } from "@/components/ui/sonner";
 
 type AppLayoutProps = {
-  children: React.ReactNode;
+  children?: React.ReactNode;
 };
 
 export default function AppLayout({ children }: AppLayoutProps): React.JSX.Element {
@@ -17,13 +17,14 @@ export default function AppLayout({ children }: AppLayoutProps): React.JSX.Eleme
           </div>
 
           <div className="flex items-center gap-3">
-            <BackendEngineSelector />
             <ThemeToggle />
           </div>
         </div>
       </header>
 
-      <main className="flex-1 container mx-auto px-4 sm:px-8 py-8 flex flex-col gap-8">{children}</main>
+      <main className="flex-1 container mx-auto px-4 sm:px-8 py-8 flex flex-col gap-8">
+        {children ?? <Outlet />}
+      </main>
 
       <footer className="border-t py-6 mt-auto">
         <div className="container mx-auto px-4 sm:px-8 flex flex-col md:flex-row items-center justify-between text-sm text-muted-foreground gap-4">
