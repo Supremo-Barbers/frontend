@@ -1,22 +1,21 @@
 import { useState, useEffect, useCallback } from "react";
 import type { Course, CreateCourseRequest } from "@/schemas/course.schemas";
-import { listCourses, createCourse } from "@/api/course.api";
-import { useBackendEngineStore } from "@/stores/backend-engine.store";
 import { useCourseStore } from "@/stores/course.store";
+import { useBackendEngineStore } from "@/stores/backend-engine.store";
 
 export const useCourses = () => {
-  const [courses, setCourses] = useState<Course[]>([]);
+  const courses = useCourseStore((state) => state.courses);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  
   const engine = useBackendEngineStore((state) => state.engine);
-  const { selectedCourse, setSelectedCourse } = useCourseStore();
+  const { selectedCourse, setSelectedCourse, listCourses, createCourse: createCourseAction } = useCourseStore();
 
   const fetchCourses = useCallback(async (): Promise<void> => {
     setIsLoading(true);
     setError(null);
     try {
-      const data = await listCourses();
-      setCourses(data);
+      await listCourses();
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError(err.message);
@@ -26,7 +25,7 @@ export const useCourses = () => {
     } finally {
       setIsLoading(false);
     }
-  }, []); 
+  }, [listCourses]); 
 
   useEffect(() => {
     void fetchCourses();
@@ -36,8 +35,7 @@ export const useCourses = () => {
     setIsLoading(true);
     setError(null);
     try {
-      const newCourse = await createCourse(courseData);
-      setCourses((prev) => [...prev, newCourse]);
+      const newCourse = await createCourseAction(courseData);
       return newCourse;
     } catch (err: unknown) {
       if (err instanceof Error) {

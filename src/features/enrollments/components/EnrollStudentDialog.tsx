@@ -32,6 +32,7 @@ export default function EnrollStudentDialog({
   const {
     handleSubmit,
     reset,
+    setValue,
     formState: { isSubmitting },
   } = useForm<EnrollStudentRequest>({
     resolver: zodResolver(EnrollStudentRequestSchema),
@@ -65,6 +66,7 @@ export default function EnrollStudentDialog({
   const handleStudentChange = (value: string | null): void => {
     if (value) {
       setSelectedStudentId(value);
+      setValue("studentId", value, { shouldValidate: true });
     }
   };
 

@@ -1,4 +1,4 @@
-import { create } from 'zustand';
+import { create } from "zustand";
 
 export type BackendEngine = "JAVA" | "PYTHON";
 
@@ -8,6 +8,6 @@ interface BackendEngineState {
 }
 
 export const useBackendEngineStore = create<BackendEngineState>((set) => ({
-  engine: "JAVA", // Default to Java
+  engine: "JAVA", 
   setEngine: (engine) => set({ engine }),
 }));

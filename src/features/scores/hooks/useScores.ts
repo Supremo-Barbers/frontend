@@ -1,11 +1,12 @@
 import { useState } from "react";
 import type { RecordScoresRequest, RecordScoresResponse } from "@/schemas/score.schemas";
-import { recordScores as recordScoresApi } from "@/api/score.api";
 import { useGradingSessionStore } from "@/stores/grading-session.store";
+import { useScoreStore } from "@/stores/score.store";
 
 export const useScores = () => {
   const activeAssessment = useGradingSessionStore((state) => state.activeAssessment);
   const setActiveAssessment = useGradingSessionStore((state) => state.setActiveAssessment);
+  const { recordScores: recordScoresAction } = useScoreStore();
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -18,8 +19,8 @@ export const useScores = () => {
     setIsLoading(true);
     setError(null);
     try {
-      const result = await recordScoresApi(activeAssessment.id, data);
-      return result;
+      await recordScoresAction(activeAssessment.id, data);
+      return { assessmentId: activeAssessment.id, recordsUpdated: data.scores.length };
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError(err.message);

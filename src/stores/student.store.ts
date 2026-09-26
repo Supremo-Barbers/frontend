@@ -1,12 +1,22 @@
 import { create } from "zustand";
-import type { Student } from "../schemas/student.schemas";
+import type { Student, RegisterStudentRequest } from "../schemas/student.schemas";
+import { RegisterStudentRequestSchema } from "../schemas/student.schemas";
 
 interface StudentState {
   students: Student[];
-  addStudent: (student: Student) => void;
+  createStudent: (request: RegisterStudentRequest) => Promise<Student>;
 }
 
 export const useStudentStore = create<StudentState>((set) => ({
   students: [],
-  addStudent: (student) => set((state) => ({ students: [...state.students, student] })),
+  createStudent: async (request) => {
+    const validatedData = RegisterStudentRequestSchema.parse(request);
+    const newStudent: Student = {
+      id: crypto.randomUUID(),
+      createdAt: new Date().toISOString(),
+      ...validatedData,
+    };
+    set((state) => ({ students: [...state.students, newStudent] }));
+    return newStudent;
+  },
 }));

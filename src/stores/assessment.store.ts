@@ -1,12 +1,22 @@
 import { create } from "zustand";
-import type { Assessment } from "../schemas/assessment.schemas";
+import type { Assessment, CreateAssessmentRequest } from "../schemas/assessment.schemas";
+import { CreateAssessmentRequestSchema } from "../schemas/assessment.schemas";
 
 interface AssessmentState {
   assessments: Assessment[];
-  addAssessment: (assessment: Assessment) => void;
+  createAssessment: (categoryId: string, request: CreateAssessmentRequest) => Promise<Assessment>;
 }
 
 export const useAssessmentStore = create<AssessmentState>((set) => ({
   assessments: [],
-  addAssessment: (assessment) => set((state) => ({ assessments: [...state.assessments, assessment] })),
+  createAssessment: async (categoryId, request) => {
+    const validatedData = CreateAssessmentRequestSchema.parse(request);
+    const newAssessment: Assessment = {
+      id: crypto.randomUUID(),
+      categoryId,
+      ...validatedData,
+    };
+    set((state) => ({ assessments: [...state.assessments, newAssessment] }));
+    return newAssessment;
+  },
 }));

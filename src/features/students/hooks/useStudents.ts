@@ -1,11 +1,10 @@
 import { useState } from "react";
 import type { Student, RegisterStudentRequest } from "@/schemas/student.schemas";
-import { registerStudent as registerStudentApi } from "@/api/student.api";
 import { useStudentStore } from "@/stores/student.store";
 
 export const useStudents = () => {
   const students = useStudentStore((state) => state.students);
-  const addStudentToStore = useStudentStore((state) => state.addStudent);
+  const { createStudent: createStudentAction } = useStudentStore();
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -14,8 +13,7 @@ export const useStudents = () => {
     setIsLoading(true);
     setError(null);
     try {
-      const newStudent = await registerStudentApi(data);
-      addStudentToStore(newStudent);
+      const newStudent = await createStudentAction(data);
       return newStudent;
     } catch (err: unknown) {
       if (err instanceof Error) {

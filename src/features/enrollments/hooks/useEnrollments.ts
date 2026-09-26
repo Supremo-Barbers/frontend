@@ -1,26 +1,29 @@
-import { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import type { Enrollment, EnrollStudentRequest } from "@/schemas/enrollment.schemas";
-import { getEnrollments as getEnrollmentsApi, enrollStudent as enrollStudentApi } from "@/api/enrollment.api";
-import { useEnrollmentStore } from "@/stores/enrollment.store";
 import { useCourseStore } from "@/stores/course.store";
+import { useEnrollmentStore } from "@/stores/enrollment.store";
 
 export const useEnrollments = () => {
-  const globalEnrollments = useEnrollmentStore((state) => state.enrollments);
-  const addEnrollmentToStore = useEnrollmentStore((state) => state.addEnrollment);
   const selectedCourse = useCourseStore((state) => state.selectedCourse);
+  const globalEnrollments = useEnrollmentStore((state) => state.enrollments);
+  const { listEnrollments, createEnrollment: createEnrollmentAction } = useEnrollmentStore();
+
+  const enrollments = React.useMemo(() => {
+    return selectedCourse ? globalEnrollments.filter(e => e.courseId === selectedCourse.id) : [];
+  }, [globalEnrollments, selectedCourse]);
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
-  const courseEnrollments = selectedCourse ? globalEnrollments.filter((e) => e.courseId === selectedCourse.id) : [];
-
   const fetchEnrollments = useCallback(async (): Promise<void> => {
-    if (!selectedCourse) return;
+    if (!selectedCourse) {
+      return;
+    }
 
     setIsLoading(true);
     setError(null);
     try {
-      await getEnrollmentsApi(selectedCourse.id);
+      await listEnrollments(selectedCourse.id);
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError(err.message);
@@ -28,7 +31,7 @@ export const useEnrollments = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [selectedCourse]);
+  }, [selectedCourse, listEnrollments]);
 
   useEffect(() => {
     void fetchEnrollments();
@@ -39,7 +42,7 @@ export const useEnrollments = () => {
       throw new Error("No course selected");
     }
 
-    const alreadyEnrolled = courseEnrollments.some((e) => e.studentId === data.studentId);
+    const alreadyEnrolled = enrollments.some((e) => e.studentId === data.studentId);
     if (alreadyEnrolled) {
       throw new Error("Student is already enrolled in this course.");
     }
@@ -47,8 +50,7 @@ export const useEnrollments = () => {
     setIsLoading(true);
     setError(null);
     try {
-      const newEnrollment = await enrollStudentApi(selectedCourse.id, data);
-      addEnrollmentToStore({ ...newEnrollment, courseId: selectedCourse.id });
+      const newEnrollment = await createEnrollmentAction(selectedCourse.id, data);
       return newEnrollment;
     } catch (err: unknown) {
       if (err instanceof Error) {
@@ -64,7 +66,7 @@ export const useEnrollments = () => {
   };
 
   return {
-    enrollments: courseEnrollments,
+    enrollments,
     isLoading,
     error,
     enrollStudent,

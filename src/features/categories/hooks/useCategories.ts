@@ -1,28 +1,31 @@
-import { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import type { Category, CreateCategoryRequest } from "@/schemas/category.schemas";
-import { listCategories, createCategory } from "@/api/category.api";
-import { useBackendEngineStore } from "@/stores/backend-engine.store";
 import { useCourseStore } from "@/stores/course.store";
+import { useBackendEngineStore } from "@/stores/backend-engine.store";
+import { useCategoryStore } from "@/stores/category.store";
 
 export const useCategories = () => {
-  const [categories, setCategories] = useState<Category[]>([]);
+  const selectedCourse = useCourseStore((state) => state.selectedCourse);
+  const globalCategories = useCategoryStore((state) => state.categories);
+  const categories = React.useMemo(() => {
+    return selectedCourse ? globalCategories.filter((c) => c.courseId === selectedCourse.id) : [];
+  }, [globalCategories, selectedCourse]);
+
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
   const engine = useBackendEngineStore((state) => state.engine);
-  const selectedCourse = useCourseStore((state) => state.selectedCourse);
+  const { listCategories, createCategory: createCategoryAction } = useCategoryStore();
 
   const fetchCategories = useCallback(async (): Promise<void> => {
     if (!selectedCourse) {
-      setCategories([]);
       return;
     }
 
     setIsLoading(true);
     setError(null);
     try {
-      const data = await listCategories(selectedCourse.id);
-      setCategories(data);
+      await listCategories(selectedCourse.id);
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError(err.message);
@@ -32,7 +35,7 @@ export const useCategories = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [selectedCourse]);
+  }, [selectedCourse, listCategories]);
 
   useEffect(() => {
     void fetchCategories();
@@ -46,8 +49,7 @@ export const useCategories = () => {
     setIsLoading(true);
     setError(null);
     try {
-      const newCategory = await createCategory(selectedCourse.id, categoryData);
-      setCategories((prev) => [...prev, newCategory]);
+      const newCategory = await createCategoryAction(selectedCourse.id, categoryData);
       return newCategory;
     } catch (err: unknown) {
       if (err instanceof Error) {

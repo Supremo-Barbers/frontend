@@ -73,6 +73,7 @@ export default function CreateAssessmentDialog({
           <DialogTitle>Create Assessment</DialogTitle>
           <DialogDescription>Add a new gradable activity to an assessment category.</DialogDescription>
         </DialogHeader>
+
         <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="category">Category</Label>

@@ -1,12 +1,13 @@
 import { useState, useCallback, useEffect } from 'react';
 import type { CourseGradeSummary } from '@/schemas/grade.schemas';
-import { getCourseGradeSummary as getCourseGradeSummaryApi } from '@/api/grade.api';
 import { useCourseStore } from '@/stores/course.store';
 import { useBackendEngineStore } from '@/stores/backend-engine.store';
+import { useGradeStore } from '@/stores/grade.store';
 
 export const useGrades = () => {
   const selectedCourse = useCourseStore((state) => state.selectedCourse);
   const engine = useBackendEngineStore((state) => state.engine);
+  const { getCourseGrades } = useGradeStore();
   
   const [gradeSummary, setGradeSummary] = useState<CourseGradeSummary | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -21,7 +22,7 @@ export const useGrades = () => {
     setIsLoading(true);
     setError(null);
     try {
-      const data = await getCourseGradeSummaryApi(selectedCourse.id);
+      const data = await getCourseGrades(selectedCourse.id, engine);
       setGradeSummary(data);
     } catch (err: unknown) {
       if (err instanceof Error) {
@@ -33,11 +34,11 @@ export const useGrades = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [selectedCourse]); 
+  }, [selectedCourse, engine, getCourseGrades]); 
 
   useEffect(() => {
     void fetchGrades();
-  }, [fetchGrades, engine]);
+  }, [fetchGrades]);
 
   return {
     gradeSummary,
