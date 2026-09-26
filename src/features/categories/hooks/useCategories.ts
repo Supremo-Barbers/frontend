@@ -41,6 +41,13 @@ export const useCategories = () => {
     void fetchCategories();
   }, [fetchCategories, engine]);
 
+  const validateWeight = (weight: number, excludeCategoryId?: string) => {
+    const currentTotal = categories.filter((c) => c.id !== excludeCategoryId).reduce((sum, c) => sum + c.weight, 0);
+    if (currentTotal + weight > 1.0) {
+      throw new Error(`Total weight cannot exceed 100%. Current total is ${Math.round(currentTotal * 100)}%.`);
+    }
+  };
+
   const addCategory = async (categoryData: CreateCategoryRequest): Promise<Category> => {
     if (!selectedCourse) {
       throw new Error("No course selected");
@@ -49,6 +56,7 @@ export const useCategories = () => {
     setIsLoading(true);
     setError(null);
     try {
+      validateWeight(categoryData.weight);
       const newCategory = await createCategoryAction(selectedCourse.id, categoryData);
       return newCategory;
     } catch (err: unknown) {
@@ -64,11 +72,51 @@ export const useCategories = () => {
     }
   };
 
+  const updateCategory = async (id: string, categoryData: CreateCategoryRequest): Promise<Category> => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      validateWeight(categoryData.weight, id);
+      const updatedCategory = await useCategoryStore.getState().updateCategory(id, categoryData);
+      return updatedCategory;
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+        throw err;
+      }
+      const genericError = new Error("Failed to update category");
+      setError(genericError.message);
+      throw genericError;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const deleteCategory = async (id: string): Promise<void> => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      await useCategoryStore.getState().deleteCategory(id);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+        throw err;
+      }
+      const genericError = new Error("Failed to delete category");
+      setError(genericError.message);
+      throw genericError;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return {
     categories,
     isLoading,
     error,
     addCategory,
+    updateCategory,
+    deleteCategory,
     fetchCategories,
   };
 };

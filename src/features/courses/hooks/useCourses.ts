@@ -7,9 +7,16 @@ export const useCourses = () => {
   const courses = useCourseStore((state) => state.courses);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-  
+
   const engine = useBackendEngineStore((state) => state.engine);
-  const { selectedCourse, setSelectedCourse, listCourses, createCourse: createCourseAction } = useCourseStore();
+  const {
+    selectedCourse,
+    setSelectedCourse,
+    listCourses,
+    createCourse: createCourseAction,
+    updateCourse: updateCourseAction,
+    deleteCourse: deleteCourseAction,
+  } = useCourseStore();
 
   const fetchCourses = useCallback(async (): Promise<void> => {
     setIsLoading(true);
@@ -25,7 +32,7 @@ export const useCourses = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [listCourses]); 
+  }, [listCourses]);
 
   useEffect(() => {
     void fetchCourses();
@@ -50,6 +57,43 @@ export const useCourses = () => {
     }
   };
 
+  const updateCourse = async (id: string, courseData: CreateCourseRequest): Promise<Course> => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const updatedCourse = await updateCourseAction(id, courseData);
+      return updatedCourse;
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+        throw err;
+      }
+      const genericError = new Error("Failed to update course");
+      setError(genericError.message);
+      throw genericError;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const deleteCourse = async (id: string): Promise<void> => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      await deleteCourseAction(id);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+        throw err;
+      }
+      const genericError = new Error("Failed to delete course");
+      setError(genericError.message);
+      throw genericError;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const selectCourse = (courseId: string): void => {
     const course = courses.find((c) => c.id === courseId) || null;
     setSelectedCourse(course);
@@ -60,6 +104,8 @@ export const useCourses = () => {
     isLoading,
     error,
     addCourse,
+    updateCourse,
+    deleteCourse,
     fetchCourses,
     selectedCourse,
     selectCourse,

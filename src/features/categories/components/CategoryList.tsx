@@ -1,12 +1,33 @@
-import React from "react";
+import React, { useState } from "react";
 import { useCategories } from "../hooks/useCategories";
 import CreateCategoryDialog from "./CreateCategoryDialog";
+import EditCategoryDialog from "./EditCategoryDialog";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { MoreHorizontalIcon } from "lucide-react";
+import { toast } from "sonner";
+
 export default function CategoryList(): React.JSX.Element {
-  const { categories, isLoading, error, addCategory } = useCategories();
+  const { categories, isLoading, error, addCategory, updateCategory, deleteCategory } = useCategories();
+  const [categoryToDelete, setCategoryToDelete] = useState<string | null>(null);
 
   const totalWeight = categories.reduce((sum, cat) => sum + cat.weight, 0);
   const totalPercentage = Math.round(totalWeight * 100);
@@ -42,6 +63,7 @@ export default function CategoryList(): React.JSX.Element {
                 <TableRow>
                   <TableHead>Category Name</TableHead>
                   <TableHead className="text-right">Weight</TableHead>
+                  <TableHead className="w-25 text-right">Action</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -52,6 +74,25 @@ export default function CategoryList(): React.JSX.Element {
                       <Badge variant="secondary" className="text-sm">
                         {Math.round(category.weight * 100)}%
                       </Badge>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium hover:bg-accent hover:text-accent-foreground h-8 w-8 focus-visible:outline-none">
+                          <MoreHorizontalIcon className="h-4 w-4" />
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <EditCategoryDialog category={category} onSubmit={updateCategory} />
+                          <DropdownMenuItem
+                            className="text-destructive focus:text-destructive"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              setCategoryToDelete(category.id);
+                            }}
+                          >
+                            Delete
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -75,6 +116,37 @@ export default function CategoryList(): React.JSX.Element {
           )}
         </div>
       </CardContent>
+
+      <AlertDialog open={!!categoryToDelete} onOpenChange={(open) => !open && setCategoryToDelete(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete the category and all assessments and scores
+              associated with it.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={async () => {
+                if (categoryToDelete) {
+                  try {
+                    await deleteCategory(categoryToDelete);
+                    toast.success("Category deleted successfully");
+                  } catch (error: unknown) {
+                    toast.error(error instanceof Error ? error.message : "Failed to delete category");
+                  }
+                  setCategoryToDelete(null);
+                }
+              }}
+            >
+              Yes, delete category
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Card>
   );
 }

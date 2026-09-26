@@ -1,16 +1,37 @@
-import React from "react";
+import React, { useState } from "react";
 import { useCategories } from "@/features/categories/hooks/useCategories";
 import { useAssessments } from "../hooks/useAssessments";
 import CreateAssessmentDialog from "./CreateAssessmentDialog";
+import EditAssessmentDialog from "./EditAssessmentDialog";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { useGradingSessionStore } from "@/stores/grading-session.store";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { MoreHorizontalIcon } from "lucide-react";
+import { toast } from "sonner";
 
 export default function AssessmentList(): React.JSX.Element {
   const { categories } = useCategories();
-  const { assessments, isLoading, error, addAssessment } = useAssessments(categories);
+  const { assessments, isLoading, error, addAssessment, updateAssessment, deleteAssessment } =
+    useAssessments(categories);
   const setActiveAssessment = useGradingSessionStore((state) => state.setActiveAssessment);
+  const [assessmentToDelete, setAssessmentToDelete] = useState<string | null>(null);
 
   const groupedAssessments = categories.map((category) => {
     return {
@@ -71,10 +92,31 @@ export default function AssessmentList(): React.JSX.Element {
                         <TableRow key={assessment.id}>
                           <TableCell className="font-medium">{assessment.title}</TableCell>
                           <TableCell>{assessment.maxScore} pts</TableCell>
-                          <TableCell className="text-right">
+                          <TableCell className="text-right flex items-center justify-end gap-2">
                             <Button variant="outline" size="sm" onClick={() => setActiveAssessment(assessment)}>
                               Enter Scores
                             </Button>
+                            <DropdownMenu>
+                              <DropdownMenuTrigger className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium hover:bg-accent hover:text-accent-foreground h-8 w-8 focus-visible:outline-none">
+                                <MoreHorizontalIcon className="h-4 w-4" />
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end">
+                                <EditAssessmentDialog
+                                  assessment={assessment}
+                                  categories={categories}
+                                  onSubmit={updateAssessment}
+                                />
+                                <DropdownMenuItem
+                                  className="text-destructive focus:text-destructive"
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    setAssessmentToDelete(assessment.id);
+                                  }}
+                                >
+                                  Delete
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
                           </TableCell>
                         </TableRow>
                       ))}
@@ -86,6 +128,33 @@ export default function AssessmentList(): React.JSX.Element {
           )}
         </div>
       </CardContent>
+
+      <AlertDialog open={!!assessmentToDelete} onOpenChange={(open) => !open && setAssessmentToDelete(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete the assessment and all scores associated with
+              it.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={async () => {
+                if (assessmentToDelete) {
+                  await deleteAssessment(assessmentToDelete);
+                  toast.success("Assessment deleted successfully");
+                  setAssessmentToDelete(null);
+                }
+              }}
+            >
+              Yes, delete assessment
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Card>
   );
 }

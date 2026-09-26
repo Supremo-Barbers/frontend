@@ -8,8 +8,22 @@ import CourseRoster from "../features/enrollments/components/CourseRoster";
 import ScoreEntry from "../features/scores/components/ScoreEntry";
 import Gradebook from "../features/grades/components/Gradebook";
 import { Button } from "@/components/ui/button";
-import { ArrowLeftIcon } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Trash2Icon, ArrowLeftIcon } from "lucide-react";
+import EditCourseDialog from "../features/courses/components/EditCourseDialog";
+import { useCourses } from "../features/courses/hooks/useCourses";
+import { toast } from "sonner";
 
 export default function CourseWorkspacePage(): React.JSX.Element {
   const { courseId } = useParams<{ courseId: string }>();
@@ -21,6 +35,8 @@ export default function CourseWorkspacePage(): React.JSX.Element {
   const listCourses = useCourseStore((state) => state.listCourses);
 
   const [isLoading, setIsLoading] = useState(true);
+
+  const { updateCourse, deleteCourse } = useCourses();
 
   useEffect(() => {
     const initWorkspace = async () => {
@@ -41,6 +57,17 @@ export default function CourseWorkspacePage(): React.JSX.Element {
     void initWorkspace();
   }, [courseId, courses.length, listCourses, setSelectedCourse]);
 
+  const handleDeleteCourse = async (id: string) => {
+    try {
+      await deleteCourse(id);
+      toast.success("Course deleted successfully");
+      navigate("/courses");
+    } catch (error) {
+      toast.error("Failed to delete course");
+      console.error(error);
+    }
+  };
+
   if (isLoading) {
     return <div className="p-8 text-center text-muted-foreground animate-pulse">Loading workspace...</div>;
   }
@@ -57,21 +84,50 @@ export default function CourseWorkspacePage(): React.JSX.Element {
 
   return (
     <div className="space-y-6 pb-12">
-      <div className="flex flex-col gap-4">
-        <Button
-          variant="ghost"
-          size="sm"
-          className="w-fit -ml-2 text-muted-foreground"
-          onClick={() => navigate("/courses")}
-        >
-          <ArrowLeftIcon className="h-4 w-4 mr-1" />
-          Back to Courses
-        </Button>
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="w-fit -ml-2 mb-2 text-muted-foreground"
+            onClick={() => navigate("/courses")}
+          >
+            <ArrowLeftIcon className="h-4 w-4 mr-1" />
+            Back to Courses
+          </Button>
           <h2 className="text-3xl font-bold tracking-tight">{selectedCourse.code} Workspace</h2>
           <p className="text-lg text-muted-foreground mt-1">
             {selectedCourse.title} <span className="mx-2 opacity-50">•</span> Term: {selectedCourse.term}
           </p>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <EditCourseDialog course={selectedCourse} onSubmit={updateCourse} />
+          <AlertDialog>
+            <AlertDialogTrigger className="inline-flex items-center justify-center whitespace-nowrap rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90 h-8 px-3 text-xs">
+              <Trash2Icon className="w-4 h-4 mr-2" />
+              Delete Course
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This action cannot be undone. This will permanently delete
+                  <strong> {selectedCourse.code}</strong> and cascade delete all associated categories, assessments,
+                  enrollments, and scores.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction
+                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                  onClick={() => handleDeleteCourse(selectedCourse.id)}
+                >
+                  Yes, delete course
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       </div>
 

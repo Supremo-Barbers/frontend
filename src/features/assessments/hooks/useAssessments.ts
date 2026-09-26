@@ -35,10 +35,49 @@ export const useAssessments = (courseCategories: Category[] = []) => {
     }
   };
 
+  const updateAssessment = async (id: string, data: CreateAssessmentRequest): Promise<Assessment> => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const updatedAssessment = await useAssessmentStore.getState().updateAssessment(id, data);
+      return updatedAssessment;
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+        throw err;
+      }
+      const genericError = new Error("Failed to update assessment");
+      setError(genericError.message);
+      throw genericError;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const deleteAssessment = async (id: string): Promise<void> => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      await useAssessmentStore.getState().deleteAssessment(id);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+        throw err;
+      }
+      const genericError = new Error("Failed to delete assessment");
+      setError(genericError.message);
+      throw genericError;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return {
     assessments: activeAssessments,
     isLoading,
     error,
     addAssessment,
+    updateAssessment,
+    deleteAssessment,
   };
 };
