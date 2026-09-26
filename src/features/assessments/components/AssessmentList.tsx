@@ -3,6 +3,7 @@ import { useCategories } from "@/features/categories/hooks/useCategories";
 import { useAssessments } from "../hooks/useAssessments";
 import CreateAssessmentDialog from "./CreateAssessmentDialog";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { useGradingSessionStore } from "@/stores/grading-session.store";
 
@@ -57,22 +58,28 @@ export default function AssessmentList(): React.JSX.Element {
                 {group.assessments.length === 0 ? (
                   <p className="text-sm text-muted-foreground italic pl-2">No activities yet.</p>
                 ) : (
-                  <ul className="space-y-2">
-                    {group.assessments.map((assessment) => (
-                      <li
-                        key={assessment.id}
-                        className="flex flex-col sm:flex-row sm:items-center justify-between p-3 border rounded-md bg-muted/20 gap-2"
-                      >
-                        <div>
-                          <div className="font-medium text-sm">{assessment.title}</div>
-                          <div className="text-sm text-muted-foreground">Max: {assessment.maxScore} pts</div>
-                        </div>
-                        <Button variant="outline" size="sm" onClick={() => setActiveAssessment(assessment)}>
-                          Enter Scores
-                        </Button>
-                      </li>
-                    ))}
-                  </ul>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead className="w-[60%]">Title</TableHead>
+                        <TableHead className="w-[20%]">Max Score</TableHead>
+                        <TableHead className="w-[20%] text-right">Action</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {group.assessments.map((assessment) => (
+                        <TableRow key={assessment.id}>
+                          <TableCell className="font-medium">{assessment.title}</TableCell>
+                          <TableCell>{assessment.maxScore} pts</TableCell>
+                          <TableCell className="text-right">
+                            <Button variant="outline" size="sm" onClick={() => setActiveAssessment(assessment)}>
+                              Enter Scores
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
                 )}
               </div>
             ))

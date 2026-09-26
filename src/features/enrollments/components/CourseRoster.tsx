@@ -3,6 +3,7 @@ import { useEnrollments } from "../hooks/useEnrollments";
 import { useStudents } from "@/features/students/hooks/useStudents";
 import EnrollStudentDialog from "./EnrollStudentDialog";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useCourseStore } from "@/stores/course.store";
 
 export default function CourseRoster(): React.JSX.Element {
@@ -47,18 +48,26 @@ export default function CourseRoster(): React.JSX.Element {
               No students are enrolled in this course yet.
             </div>
           ) : (
-            <ul className="space-y-2">
-              {enrolledStudents.map((student) => (
-                <li key={student.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-3 border rounded-md bg-muted/20 gap-2">
-                  <div>
-                    <span className="font-medium">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Student Name</TableHead>
+                  <TableHead>Email</TableHead>
+                  <TableHead>Student No.</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {enrolledStudents.map((student) => (
+                  <TableRow key={student.id}>
+                    <TableCell className="font-medium">
                       {student.lastName}, {student.firstName}
-                    </span>
-                  </div>
-                  <span className="text-sm font-mono text-muted-foreground">{student.studentNumber}</span>
-                </li>
-              ))}
-            </ul>
+                    </TableCell>
+                    <TableCell>{student.email}</TableCell>
+                    <TableCell className="font-mono">{student.studentNumber}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           )}
         </div>
       </CardContent>

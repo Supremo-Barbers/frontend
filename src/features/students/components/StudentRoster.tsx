@@ -2,6 +2,7 @@ import React from "react";
 import { useStudents } from "../hooks/useStudents";
 import RegisterStudentDialog from "./RegisterStudentDialog";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 export default function StudentRoster(): React.JSX.Element {
   const { students, isLoading, error, registerStudent } = useStudents();
@@ -32,24 +33,26 @@ export default function StudentRoster(): React.JSX.Element {
               No students are registered in the system yet.
             </div>
           ) : (
-            <ul className="space-y-2">
-              {students.map((student) => (
-                <li
-                  key={student.id}
-                  className="flex flex-col sm:flex-row sm:items-center justify-between p-3 border rounded-md"
-                >
-                  <div>
-                    <div className="font-medium">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Student Name</TableHead>
+                  <TableHead>Email</TableHead>
+                  <TableHead>Student No.</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {students.map((student) => (
+                  <TableRow key={student.id}>
+                    <TableCell className="font-medium">
                       {student.lastName}, {student.firstName}
-                    </div>
-                    <div className="text-sm text-muted-foreground">{student.email}</div>
-                  </div>
-                  <div className="mt-2 sm:mt-0 text-sm font-mono bg-muted/50 px-2 py-1 rounded">
-                    {student.studentNumber}
-                  </div>
-                </li>
-              ))}
-            </ul>
+                    </TableCell>
+                    <TableCell>{student.email}</TableCell>
+                    <TableCell className="font-mono">{student.studentNumber}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           )}
         </div>
       </CardContent>

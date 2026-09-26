@@ -4,11 +4,9 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { RefreshCwIcon } from "lucide-react";
-import { useBackendEngineStore } from "@/stores/backend-engine.store";
 
 export default function Gradebook(): React.JSX.Element {
   const { gradeSummary, isLoading, error, refetchGrades } = useGrades();
-  const currentEngine = useBackendEngineStore((state) => state.engine);
 
   return (
     <Card className="shadow-sm overflow-hidden">
@@ -18,9 +16,6 @@ export default function Gradebook(): React.JSX.Element {
           <CardDescription className="mt-1">Dynamically computed grades from the backend engine.</CardDescription>
         </div>
         <div className="flex items-center gap-3">
-          <Badge variant="outline" className="text-xs">
-            Engine: {currentEngine}
-          </Badge>
           <Button variant="outline" size="sm" onClick={() => refetchGrades()} disabled={isLoading}>
             <RefreshCwIcon className={`h-4 w-4 mr-2 ${isLoading ? "animate-spin" : ""}`} />
             Refresh

@@ -3,6 +3,7 @@ import { useCategories } from "../hooks/useCategories";
 import CreateCategoryDialog from "./CreateCategoryDialog";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 export default function CategoryList(): React.JSX.Element {
   const { categories, isLoading, error, addCategory } = useCategories();
@@ -36,14 +37,26 @@ export default function CategoryList(): React.JSX.Element {
               No categories have been created yet.
             </div>
           ) : (
-            categories.map((category) => (
-              <div key={category.id} className="flex items-center justify-between p-3 border rounded-md">
-                <span className="font-medium">{category.name}</span>
-                <Badge variant="secondary" className="text-sm">
-                  {Math.round(category.weight * 100)}%
-                </Badge>
-              </div>
-            ))
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Category Name</TableHead>
+                  <TableHead className="text-right">Weight</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {categories.map((category) => (
+                  <TableRow key={category.id}>
+                    <TableCell className="font-medium">{category.name}</TableCell>
+                    <TableCell className="text-right">
+                      <Badge variant="secondary" className="text-sm">
+                        {Math.round(category.weight * 100)}%
+                      </Badge>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           )}
 
           {categories.length > 0 && (
