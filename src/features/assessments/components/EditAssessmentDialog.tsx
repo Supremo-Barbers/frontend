@@ -15,7 +15,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select";
 import { toast } from "sonner";
 
 interface EditAssessmentDialogProps {
@@ -107,10 +107,14 @@ export default function EditAssessmentDialog({
           <div className="space-y-2">
             <Label htmlFor="category">Category</Label>
             <Select value={selectedCategoryId} onValueChange={handleCategoryChange}>
-              <SelectTrigger id="category" className="z-100">
-                <SelectValue placeholder="Select a category" />
+              <SelectTrigger id="category" className="w-full z-[100]">
+                <span className={`flex flex-1 text-left ${!selectedCategoryId ? "text-muted-foreground" : ""}`}>
+                  {selectedCategoryId
+                    ? `${categories.find((c) => c.id === selectedCategoryId)?.name} (${Math.round((categories.find((c) => c.id === selectedCategoryId)?.weight || 0) * 100)}%)`
+                    : "Select a category"}
+                </span>
               </SelectTrigger>
-              <SelectContent className="z-100">
+              <SelectContent className="z-[100]">
                 {categories.map((category) => (
                   <SelectItem key={category.id} value={category.id}>
                     {category.name} ({Math.round(category.weight * 100)}%)

@@ -8,6 +8,7 @@ interface EnrollmentState {
   enrollments: Enrollment[];
   listEnrollments: (courseId: string) => Promise<Enrollment[]>;
   createEnrollment: (courseId: string, request: EnrollStudentRequest) => Promise<Enrollment>;
+  deleteEnrollment: (id: string) => Promise<void>;
 }
 
 export const useEnrollmentStore = create<EnrollmentState>()(
@@ -34,6 +35,27 @@ export const useEnrollmentStore = create<EnrollmentState>()(
 
         set((state) => ({ enrollments: [...state.enrollments, newEnrollment] }));
         return newEnrollment;
+      },
+      deleteEnrollment: async (id) => {
+        const enrollment = get().enrollments.find((e) => e.id === id);
+        if (!enrollment) return;
+
+        const { useCategoryStore } = await import("./category.store");
+        const { useAssessmentStore } = await import("./assessment.store");
+        const { useScoreStore } = await import("./score.store");
+
+        const categories = useCategoryStore.getState().categories.filter((c) => c.courseId === enrollment.courseId);
+        const categoryIds = categories.map(c => c.id);
+        const assessments = useAssessmentStore.getState().assessments.filter((a) => categoryIds.includes(a.categoryId));
+        const assessmentIds = assessments.map(a => a.id);
+
+        useScoreStore.setState((state) => ({
+          scores: state.scores.filter(
+            (s) => !(s.studentId === enrollment.studentId && assessmentIds.includes(s.assessmentId))
+          )
+        }));
+
+        set((state) => ({ enrollments: state.enrollments.filter((e) => e.id !== id) }));
       },
     }),
     {

@@ -15,7 +15,7 @@ import {
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select";
 import { toast } from "sonner";
 
 interface CreateAssessmentDialogProps {
@@ -83,8 +83,12 @@ export default function CreateAssessmentDialog({
                 if (val) setSelectedCategoryId(val);
               }}
             >
-              <SelectTrigger id="category">
-                <SelectValue placeholder="Select a category" />
+              <SelectTrigger id="category" className="w-full">
+                <span className={`flex flex-1 text-left ${!selectedCategoryId ? "text-muted-foreground" : ""}`}>
+                  {selectedCategoryId
+                    ? categories.find((c) => c.id === selectedCategoryId)?.name
+                    : "Select a category"}
+                </span>
               </SelectTrigger>
               <SelectContent>
                 {categories.map((cat) => (

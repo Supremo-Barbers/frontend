@@ -65,10 +65,29 @@ export const useEnrollments = () => {
     }
   };
 
+  const unenrollStudent = async (enrollmentId: string): Promise<void> => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      await useEnrollmentStore.getState().deleteEnrollment(enrollmentId);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+        throw err;
+      }
+      const genericError = new Error("Failed to unenroll student");
+      setError(genericError.message);
+      throw genericError;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return {
     enrollments,
     isLoading,
     error,
     enrollStudent,
+    unenrollStudent,
   };
 };
