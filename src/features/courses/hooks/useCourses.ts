@@ -1,14 +1,11 @@
 import { useState, useEffect, useCallback } from "react";
 import type { Course, CreateCourseRequest } from "@/schemas/course.schemas";
 import { useCourseStore } from "@/stores/course.store";
-import { useBackendEngineStore } from "@/stores/backend-engine.store";
-
 export const useCourses = () => {
   const courses = useCourseStore((state) => state.courses);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
-  const engine = useBackendEngineStore((state) => state.engine);
   const {
     selectedCourse,
     setSelectedCourse,
@@ -36,7 +33,7 @@ export const useCourses = () => {
 
   useEffect(() => {
     void fetchCourses();
-  }, [fetchCourses, engine]);
+  }, [fetchCourses]);
 
   const addCourse = async (courseData: CreateCourseRequest): Promise<Course> => {
     setIsLoading(true);

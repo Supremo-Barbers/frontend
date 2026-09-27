@@ -8,11 +8,11 @@ import { useStudentStore } from "./student.store";
 import { useScoreStore } from "./score.store";
 
 interface GradeState {
-  getCourseGrades: (courseId: string, engine: string) => Promise<CourseGradeSummary>;
+  getCourseGrades: (courseId: string) => Promise<CourseGradeSummary>;
 }
 
 export const useGradeStore = create<GradeState>(() => ({
-  getCourseGrades: async (courseId, engine) => {
+  getCourseGrades: async (courseId) => {
     const course = useCourseStore.getState().courses.find((c) => c.id === courseId);
     const categories = useCategoryStore.getState().categories.filter((c) => c.courseId === courseId);
     const enrollments = useEnrollmentStore.getState().enrollments.filter((e) => e.courseId === courseId);
@@ -82,7 +82,7 @@ export const useGradeStore = create<GradeState>(() => ({
     return {
       courseId,
       courseCode: course?.code || "UNKNOWN",
-      engine,
+      engine: "ZUSTAND_SIMULATION",
       gradingSystem: "STANDARD_0_BASED",
       students: studentGrades,
     };

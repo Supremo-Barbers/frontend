@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import type { Category, CreateCategoryRequest } from "@/schemas/category.schemas";
 import { useCourseStore } from "@/stores/course.store";
-import { useBackendEngineStore } from "@/stores/backend-engine.store";
 import { useCategoryStore } from "@/stores/category.store";
 
 export const useCategories = () => {
@@ -14,7 +13,6 @@ export const useCategories = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
-  const engine = useBackendEngineStore((state) => state.engine);
   const { listCategories, createCategory: createCategoryAction } = useCategoryStore();
 
   const fetchCategories = useCallback(async (): Promise<void> => {
@@ -39,7 +37,7 @@ export const useCategories = () => {
 
   useEffect(() => {
     void fetchCategories();
-  }, [fetchCategories, engine]);
+  }, [fetchCategories]);
 
   const validateWeight = (weight: number, excludeCategoryId?: string) => {
     const currentTotal = categories.filter((c) => c.id !== excludeCategoryId).reduce((sum, c) => sum + c.weight, 0);

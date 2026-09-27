@@ -1,12 +1,10 @@
 import { useState, useCallback, useEffect } from 'react';
 import type { CourseGradeSummary } from '@/schemas/grade.schemas';
 import { useCourseStore } from '@/stores/course.store';
-import { useBackendEngineStore } from '@/stores/backend-engine.store';
 import { useGradeStore } from '@/stores/grade.store';
 
 export const useGrades = () => {
   const selectedCourse = useCourseStore((state) => state.selectedCourse);
-  const engine = useBackendEngineStore((state) => state.engine);
   const { getCourseGrades } = useGradeStore();
   
   const [gradeSummary, setGradeSummary] = useState<CourseGradeSummary | null>(null);
@@ -22,7 +20,7 @@ export const useGrades = () => {
     setIsLoading(true);
     setError(null);
     try {
-      const data = await getCourseGrades(selectedCourse.id, engine);
+      const data = await getCourseGrades(selectedCourse.id);
       setGradeSummary(data);
     } catch (err: unknown) {
       if (err instanceof Error) {
@@ -34,7 +32,7 @@ export const useGrades = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [selectedCourse, engine, getCourseGrades]); 
+  }, [selectedCourse, getCourseGrades]); 
 
   useEffect(() => {
     void fetchGrades();
